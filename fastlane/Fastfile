@@ -19,4 +19,3 @@ desc "Deploy a new version to the Google Play"
     gradle(task: "clean assembleRelease")
    
   end
-end
