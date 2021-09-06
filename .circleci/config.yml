@@ -1,14 +1,14 @@
 version: 2.1
 
 executors:
-  android-flutter:
+  android:
      docker:
      - image: circleci/android:api-28-alpha
      environment:
        JVM_OPTS: -Xmx3200m
 jobs:
   build_deploy:
-    executor: android-flutter
+    executor: android
     steps:
       - checkout
       - restore_cache:
@@ -27,7 +27,7 @@ jobs:
 workflows:
   deploy:
     jobs:
-      - beta_deploy:
+      - build_deploy:
           filters:
             branches:
               only: circleci-project-setup
