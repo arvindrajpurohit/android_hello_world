@@ -44,7 +44,7 @@ jobs:
       - checkout
       - install_bundler
       - install_gems
-      - install_pods}
+      - install_pods
       - run:
           name: Run the unit tests
           command: bundle exec fastlane build    
