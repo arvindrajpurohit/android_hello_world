@@ -25,18 +25,16 @@ commands:
           paths:
             - vendor/bundle
 
-  install_pods:
-    description: Install pod dependencies with caching
-    steps:
-      - restore_cache:
-          keys:
-            - cocoa-{{ checksum "Podfile.lock" }}
-            - cocoa-
-      - run: bundle exec fastlane dependencies
-      - save_cache:
-          key: cocoa-{{ checksum "Podfile.lock" }}
+  gradle_dependencies:
+    description: Install gradle dependencies with caching
+    stpes:
+    - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      
+    - save_cache:
           paths:
-            - Pods
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }
 jobs:
   build_deploy:
     executor: android
@@ -44,9 +42,9 @@ jobs:
       - checkout
       - install_bundler
       - install_gems
-      - install_pods
+      - gradle_dependencies
       - run:
-          name: Run the unit tests
+          name: Run the Build
           command: bundle exec fastlane build    
 
 workflows:
