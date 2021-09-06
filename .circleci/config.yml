@@ -34,7 +34,7 @@ commands:
     - save_cache:
           paths:
             - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
 jobs:
   build_deploy:
     executor: android
