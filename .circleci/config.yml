@@ -15,7 +15,7 @@ jobs:
       - checkout
       - run: echo "$PLAY_STORE_UPLOAD_KEY" | base64 --decode > key.jks
       - run: echo "$PLAY_STORE_UPLOAD_KEY_INFO" | base64 --decode > android/key.properties
-      - run:  fastlane beta
+      - run: cd android && fastlane beta
 
 workflows:
   deploy:
@@ -23,4 +23,4 @@ workflows:
       - beta_deploy:
           filters:
             branches:
-              only: test 
+              only: beta
