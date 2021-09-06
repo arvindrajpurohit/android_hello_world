@@ -27,7 +27,7 @@ commands:
 
   gradle_dependencies:
     description: Install gradle dependencies with caching
-    stpes:
+    steps:
     - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       
