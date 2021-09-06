@@ -6,20 +6,45 @@ executors:
      - image: circleci/android:api-29
      environment:
        JVM_OPTS: -Xmx3200m
+
+commands:
+  install_bundler:
+    description: Install the bundler version specified in the lock file
+    steps:
+      - run: gem install bundler -v $(cat Gemfile.lock | tail -1 | tr -d " ")
+
+  install_gems:
+    description: Install Ruby gems with caching
+    steps:
+      - install_bundler
+      - restore_cache:
+          key: gems-{{ checksum "Gemfile.lock" }}
+      - run: bundle check --path vendor/bundle || bundle install --deployment --path vendor/bundle
+      - save_cache:
+          key: gems-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+  install_pods:
+    description: Install pod dependencies with caching
+    steps:
+      - restore_cache:
+          keys:
+            - cocoa-{{ checksum "Podfile.lock" }}
+            - cocoa-
+      - run: bundle exec fastlane dependencies
+      - save_cache:
+          key: cocoa-{{ checksum "Podfile.lock" }}
+          paths:
+            - Pods
 jobs:
   build_deploy:
     executor: android
     steps:
       - checkout
-      - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - run:
-          name: Install fastlane
-          command: bundle install
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - install_bundler
+      - install_gems
+      - install_pods}
       - run:
           name: Run the unit tests
           command: bundle exec fastlane build    
